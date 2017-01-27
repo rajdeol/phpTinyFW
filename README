@@ -1,0 +1,57 @@
+===============================================================================================
+# Tiny Framework
+
+Tiny framework is a custom written framework used in mapping application. Following is a typical request flow in the framework
+
+  - Request arrives at webroot
+  - .htaccess routes all the requests to bootstrap.php sitting at the web-root
+  - bootstrap.php init the framework and route the request to controller
+
+# Request to controller
+The framework has a concept of "system" which is just like package or bundle. System becomes the top level directory and all your controller and view code is arranged in this directory.
+
+  - System directories are created in Library folder
+  - In our application we have "Map" as system
+  - Every system further has controllers which contains features
+  - Controller is a subdirectory within system folder
+  - For example if we want a feature(controller) "user" in our system ('MAP') we will create "user" subdirectory within "Map" directory.
+  - All these controller subdirectories will further have a subdirectory named "View" and a file named "Controller.php"
+  - "View" directory will hold html templates related to the controller
+  - "Controller.php" will have class for the controller
+  - The name of the class within "Controller.php" will have the following pattern 
+     SYSTEM_NAME + underscore + CONTROLLER_NAME + underscore + Controller
+  - For example, for our system "Map" and controller(feature) "user" the class name will be "Map_User_Controller"
+  - This controller class will have methods with method names joined by "Action" keyword
+  - For example, "loginAction","logoutAction" etc
+   
+# Request URL Structure
+  The URL is directly mapped to system, controller and a method in the controller. Following is the structure:
+
+http://your-host/system-name/controller-name/action-name
+
+so for a URL like : http://your-host/map/user/login
+  - There should be a "Map" (notice the first letter upper-case) subdirectory under "Library" directory 
+  - There should be a "User" (notice the first letter upper-case) subdirectory under "Map" directory 
+  - There should be a file named "Controller.php" inside the "User" subdirectory
+  - There should be a php class by name "Map_User_Controller" in the "Controller.php" file
+  - There should be a public method by name "loginAction" in the class "Map_User_Controller"
+   
+  # View and Layouts:
+Layouts files are placed in system/Layout folder. For example, all the layout for "Map" system will be saved in MAP/Layout folder.
+  - Layout files have .html extension and they contain php and html code
+  - Layouts include additional views by calling "getcontent()" method of View class( explained below in framework classes section)
+  ```php
+  <?= $this->getContent() ?>
+  ```
+  - View files are kept in controller folder under subdirectory named "View". For example, for URL: http://your-host/map/user/login views will be in "Map/User/View" folder.
+   
+  # Framework core classes
+
+Framework has few core classes which handle all the heavy work of processing the request, including the controller, generating the view and returning the response. These classes are declared in "Framework" folder.
+
+  - **Despatcher.php :** This file contains "Framework_Dispatcher" class which handles request processing and executing the associated controllers.
+  - **View.php :** This file contains "Framework_View" class which handles including layouts and rendering views.
+  - **Session.php :** This file contains "Framework_Session" class which manages user login and authentication.
+  - **Controller.php :** This file contains "Framework_Controller" class. This is the base class for all controllers. All the controllers should extend this class.
+  - **DB.php :** This file contains "Framework_DB" class which handles database connection.
+  - **Table.php :** This file contains "Framework_Table" class which contains common functions used for fetching and writing data into database tables.  
